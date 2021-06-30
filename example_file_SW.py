@@ -24,10 +24,8 @@ import joblib
 from sklearn.metrics import r2_score
 import glob
 
-### paths to input files - adapt
-path_SW = './'
-path_inputs = './'
-path_rsdt = './'
+### paths to files - adapt
+path_to_files = './'
 
 ### list identifiers for the datasets used to train each Ridge regression 
 ### (four reanalyses and 52 CMIP5/CMIP6 models)
@@ -65,8 +63,8 @@ nr_planes = 5
 
 ### read longitude and latitude coordinates from one example file
 
-lon = netCDF4.Dataset(path_inputs+'rsdt/hur700_Amon_ACCESS1-0_historical_r1i1p1.nc')['lon'][:]
-lat = netCDF4.Dataset(path_inputs+'rsdt/hur700_Amon_ACCESS1-0_historical_r1i1p1.nc')['lat'][:]
+lon = netCDF4.Dataset(path_to_files+'data/CMIP/inputs/hur700_Amon_ACCESS1-0_historical_r1i1p1.nc')['lon'][:]
+lat = netCDF4.Dataset(path_to_files+'data/CMIP/inputs/hur700_Amon_ACCESS1-0_historical_r1i1p1.nc')['lat'][:]
 
 ### define list of regularization parameters that each Ridge regression is cross-validated over
 alpha_i=[0,1e-12,3e-12,1e-11,3e-11,1e-10,3e-10,1e-9,3e-9,1e-8,3e-8,1e-7,3e-7,1e-6,3e-6,1e-5,3e-5,0.0001,
@@ -101,7 +99,7 @@ for modeli in range(0,nr_models):
     for lati in range(0,nr_lat):
         ### data needed to mask out latitudes with unreliable satellite data 
         ### (see Methods section in main paper)
-        rsdt_pi = netCDF4.Dataset(path_rsdt+'solar_zenith_angle_histrcp.nc')['sza'][:nt,lati]
+        rsdt_pi = netCDF4.Dataset(path_to_files+'data/solar_zenith/solar_zenith_angle_histrcp.nc')['sza'][:nt,lati]
         for loni in range(0,nr_lon):
             lon_sel = loni+nr_lon
             ### defines number of grid points/size of box around the target grid point considered in each regression
@@ -109,40 +107,40 @@ for modeli in range(0,nr_models):
             latd = 15
             ### take into account slightly different data formats after pre-processing when reading in data
             if model_list[modeli] in ['CFSR']:
-                hur700_pi = netCDF4.Dataset(glob.glob(path_inputs+"CFSR/hur700_*"+"*.nc")[0])['hur'][:nt,:,:]
-                wap500_pi = netCDF4.Dataset(glob.glob(path_inputs+"CFSR/wap500_*"+"*.nc")[0])['wap'][:nt,:,:]
-                utrh_pi = netCDF4.Dataset(glob.glob(path_inputs+"CFSR/utrh_*"+"*.nc")[0])['utrh'][:nt,:,:]
-                ts_pi = netCDF4.Dataset(glob.glob(path_inputs+"CFSR/ts_*"+"*.nc")[0])['ts'][:nt,:,:]
-                eislts_pi = netCDF4.Dataset(glob.glob(path_inputs+"CFSR/eislts_*"+"*.nc")[0])['eislts'][:nt,:,:]
-                Y_pi = netCDF4.Dataset(path_SW+'albcld_200003-201909.nc')['albcld'][:nt,lati,loni]
+                hur700_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CFSR/inputs/hur700_*"+"*.nc")[0])['hur'][:nt,:,:]
+                wap500_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CFSR/inputs/wap500_*"+"*.nc")[0])['wap'][:nt,:,:]
+                utrh_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CFSR/inputs/utrh_*"+"*.nc")[0])['utrh'][:nt,:,:]
+                ts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CFSR/inputs/ts_*"+"*.nc")[0])['ts'][:nt,:,:]
+                eislts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CFSR/inputs/eislts_*"+"*.nc")[0])['eislts'][:nt,:,:]
+                Y_pi = netCDF4.Dataset(path_to_files+"data/obs_clouds/albcld_200003-201909.nc")['albcld'][:nt,lati,loni]
             elif model_list[modeli] in ['ERA5']:
-                hur700_pi = netCDF4.Dataset(glob.glob(path_inputs+"ERA5/hur700_*"+"*.nc")[0])['hur'][:nt,:,:]
-                wap500_pi = netCDF4.Dataset(glob.glob(path_inputs+"ERA5/wap500_*"+"*.nc")[0])['wap'][:nt,:,:]
-                utrh_pi = netCDF4.Dataset(glob.glob(path_inputs+"ERA5/utrh_*"+"*.nc")[0])['utrh'][:nt,:,:]
-                ts_pi = netCDF4.Dataset(glob.glob(path_inputs+"ERA5/ts_*"+"*.nc")[0])['ts'][:nt,:,:]
-                eislts_pi = netCDF4.Dataset(glob.glob(path_inputs+"ERA5/eislts_*"+"*.nc")[0])['eislts'][:nt,:,:]
-                Y_pi = netCDF4.Dataset(path_SW+'albcld_200003-201909.nc')['albcld'][:nt,lati,loni]
+                hur700_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/ERA5/inputs/hur700_*"+"*.nc")[0])['hur'][:nt,:,:]
+                wap500_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/ERA5/inputs/wap500_*"+"*.nc")[0])['wap'][:nt,:,:]
+                utrh_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/ERA5/inputs/utrh_*"+"*.nc")[0])['utrh'][:nt,:,:]
+                ts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/ERA5/inputs/ts_*"+"*.nc")[0])['ts'][:nt,:,:]
+                eislts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/ERA5/inputs/eislts_*"+"*.nc")[0])['eislts'][:nt,:,:]
+                Y_pi = netCDF4.Dataset(path_to_files+"data/obs_clouds/albcld_200003-201909.nc")['albcld'][:nt,lati,loni]
             elif model_list[modeli] in ['MERRA2']:
-                hur700_pi = netCDF4.Dataset(glob.glob(path_inputs+"MERRA2/hur700_*"+"*.nc")[0])['hur'][:nt,:,:]
-                wap500_pi = netCDF4.Dataset(glob.glob(path_inputs+"MERRA2/wap500_*"+"*.nc")[0])['wap'][:nt,:,:]
-                utrh_pi = netCDF4.Dataset(glob.glob(path_inputs+"MERRA2/utrh_*"+"*.nc")[0])['utrh'][:nt,:,:]
-                ts_pi = netCDF4.Dataset(glob.glob(path_inputs+"MERRA2/ts_*"+"*.nc")[0])['ts'][:nt,:,:]
-                eislts_pi = netCDF4.Dataset(glob.glob(path_inputs+"MERRA2/eislts_*"+"*.nc")[0])['eislts'][:nt,:,:]
-                Y_pi = netCDF4.Dataset(path_SW+'albcld_200003-201909.nc')['albcld'][:nt,lati,loni]
+                hur700_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/MERRA2/inputs/hur700_*"+"*.nc")[0])['hur'][:nt,:,:]
+                wap500_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/MERRA2/inputs/wap500_*"+"*.nc")[0])['wap'][:nt,:,:]
+                utrh_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/MERRA2/inputs/utrh_*"+"*.nc")[0])['utrh'][:nt,:,:]
+                ts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/MERRA2/inputs/ts_*"+"*.nc")[0])['ts'][:nt,:,:]
+                eislts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/MERRA2/inputs/eislts_*"+"*.nc")[0])['eislts'][:nt,:,:]
+                Y_pi = netCDF4.Dataset(path_to_files+"data/obs_clouds/albcld_200003-201909.nc")['albcld'][:nt,lati,loni]
             elif model_list[modeli] in ['JRA-55']:
-                hur700_pi = netCDF4.Dataset(glob.glob(path_inputs+"JRA55/hur700_*"+"*.nc")[0])['hur'][:nt,0,:,:]
-                wap500_pi = netCDF4.Dataset(glob.glob(path_inputs+"JRA55/wap500_*"+"*.nc")[0])['wap'][:nt,:,:]
-                utrh_pi = netCDF4.Dataset(glob.glob(path_inputs+"JRA55/utrh_*"+"*.nc")[0])['utrh'][:nt,:,:]
-                ts_pi = netCDF4.Dataset(glob.glob(path_inputs+"JRA55/ts_*"+"*.nc")[0])['ts'][:nt,:,:]
-                eislts_pi = netCDF4.Dataset(glob.glob(path_inputs+"JRA55/eislts_*"+"*.nc")[0])['eislts'][:nt,:,:]
-                Y_pi = netCDF4.Dataset(path_SW+'albcld_200003-201909.nc')['albcld'][:nt,lati,loni]
+                hur700_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/JRA55/inputs/hur700_*"+"*.nc")[0])['hur'][:nt,0,:,:]
+                wap500_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/JRA55/inputs/wap500_*"+"*.nc")[0])['wap'][:nt,:,:]
+                utrh_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/JRA55/inputs/utrh_*"+"*.nc")[0])['utrh'][:nt,:,:]
+                ts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/JRA55/inputs/ts_*"+"*.nc")[0])['ts'][:nt,:,:]
+                eislts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/JRA55/inputs/eislts_*"+"*.nc")[0])['eislts'][:nt,:,:]
+                Y_pi = netCDF4.Dataset(path_to_files+"data/obs_clouds/albcld_200003-201909.nc")['albcld'][:nt,lati,loni]
             else:
-                hur700_pi = netCDF4.Dataset(glob.glob(path_inputs+"rsdt/hur700_Amon*"+model_list[modeli]+"*.nc")[0])['hur'][:nt,0,:,:]
-                wap500_pi = netCDF4.Dataset(glob.glob(path_inputs+"rsdt/wap500_Amon*"+model_list[modeli]+"*.nc")[0])['wap'][:nt,0,:,:]
-                utrh_pi = netCDF4.Dataset(glob.glob(path_inputs+"rsdt/utrh_Amon*"+model_list[modeli]+"*.nc")[0])['utrh'][:nt,:,:]
-                ts_pi = netCDF4.Dataset(glob.glob(path_inputs+"rsdt/ts_Amon*"+model_list[modeli]+"*.nc")[0])['ts'][:nt,:,:]
-                eislts_pi = netCDF4.Dataset(glob.glob(path_inputs+"rsdt/eislts_Amon*"+model_list[modeli]+"*.nc")[0])['eislts'][:nt,:,:]
-                Y_pi = netCDF4.Dataset(glob.glob(path_SW+"albcld_Amon_*"+model_list[modeli]+"*.nc")[0])['albcld'][:nt,lati,loni]
+                hur700_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CMIP/inputs/hur700_Amon*"+model_list[modeli]+"*.nc")[0])['hur'][:nt,0,:,:]
+                wap500_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CMIP/inputs/wap500_Amon*"+model_list[modeli]+"*.nc")[0])['wap'][:nt,0,:,:]
+                utrh_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CMIP/inputs/utrh_Amon*"+model_list[modeli]+"*.nc")[0])['utrh'][:nt,:,:]
+                ts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CMIP/inputs/ts_Amon*"+model_list[modeli]+"*.nc")[0])['ts'][:nt,:,:]
+                eislts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CMIP/inputs/eislts_Amon*"+model_list[modeli]+"*.nc")[0])['eislts'][:nt,:,:]
+                Y_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CMIP/albcld_LW/+"albcld_Amon_*"+model_list[modeli]+"*.nc")[0])['albcld'][:nt,lati,loni]
             ### stack data so that the predictor boxes can be easily selected and the resulting coefficients indexed for further analysis
             hur700_pi_3 = np.dstack((hur700_pi,hur700_pi,hur700_pi))
             utrh_pi_3 = np.dstack((utrh_pi,utrh_pi,utrh_pi))
@@ -184,7 +182,7 @@ for modeli in range(0,nr_models):
     print(model_list[modeli],min(alpha_list),max(alpha_list))
 
 ### directory to store output
-path_batch = './'
+path_batch = './output/'
 ### save results
 joblib.dump(dict_regr_results, path_batch+area_code+'.sav')
 joblib.dump(coeffs, path_batch+'coeffs_'+area_code+'.sav')
