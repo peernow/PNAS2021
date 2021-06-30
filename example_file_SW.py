@@ -103,8 +103,8 @@ for modeli in range(0,nr_models):
         for loni in range(0,nr_lon):
             lon_sel = loni+nr_lon
             ### defines number of grid points/size of box around the target grid point considered in each regression
-            lond = 30
-            latd = 15
+            lond = 10
+            latd = 5
             ### take into account slightly different data formats after pre-processing when reading in data
             if model_list[modeli] in ['CFSR']:
                 hur700_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CFSR/inputs/hur700_*"+"*.nc")[0])['hur'][:nt,:,:]
