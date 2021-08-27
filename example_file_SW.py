@@ -140,7 +140,7 @@ for modeli in range(0,nr_models):
                 utrh_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CMIP/inputs/utrh_Amon*"+model_list[modeli]+"*.nc")[0])['utrh'][:nt,:,:]
                 ts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CMIP/inputs/ts_Amon*"+model_list[modeli]+"*.nc")[0])['ts'][:nt,:,:]
                 eislts_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CMIP/inputs/eislts_Amon*"+model_list[modeli]+"*.nc")[0])['eislts'][:nt,:,:]
-                Y_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CMIP/albcld_LW/+"albcld_Amon_*"+model_list[modeli]+"*.nc")[0])['albcld'][:nt,lati,loni]
+                Y_pi = netCDF4.Dataset(glob.glob(path_to_files+"data/CMIP/albcld_LW/albcld_Amon_*"+model_list[modeli]+"*.nc")[0])['albcld'][:nt,lati,loni]
             ### stack data so that the predictor boxes can be easily selected and the resulting coefficients indexed for further analysis
             hur700_pi_3 = np.dstack((hur700_pi,hur700_pi,hur700_pi))
             utrh_pi_3 = np.dstack((utrh_pi,utrh_pi,utrh_pi))
