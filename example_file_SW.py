@@ -199,7 +199,7 @@ coeffs_var = file_to_write.createVariable('coeffs',np.float32,('model_nr','lat_o
 coeffs_var[:] = coeffs
 file_to_write.close()
 
-file_to_write = netCDF4.Dataset(path_batch+'number_samples'+area_code+'.nc','w',dtype=np.float64,format='NETCDF4_CLASSIC')
+file_to_write = netCDF4.Dataset(path_batch+'number_samples'+area_code+'.nc','w',dtype=np.float32,format='NETCDF4_CLASSIC')
 model_dim = file_to_write.createDimension('model_nr',nr_models)
         
 lat_dim = file_to_write.createDimension('lat',36)
